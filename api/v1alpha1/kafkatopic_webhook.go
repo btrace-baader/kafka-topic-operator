@@ -1,0 +1,143 @@
+package v1alpha1
+
+import (
+	"errors"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	validationutils "k8s.io/apimachinery/pkg/util/validation"
+	"k8s.io/apimachinery/pkg/util/validation/field"
+	ctrl "sigs.k8s.io/controller-runtime"
+	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
+)
+
+// log is for logging in this package.
+var kafkatopiclog = logf.Log.WithName("kafkatopic-resource")
+
+func (r *KafkaTopic) SetupWebhookWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewWebhookManagedBy(mgr).
+		For(r).
+		Complete()
+}
+
+// +kubebuilder:webhook:path=/mutate-kafka-btrace-com-v1alpha1-kafkatopic,mutating=true,failurePolicy=fail,groups=kafka.btrace.com,resources=kafkatopics,verbs=create;update,versions=v1alpha1,name=mkafkatopic.kb.io
+
+var _ webhook.Defaulter = &KafkaTopic{}
+
+// Default implements webhook.Defaulter so a webhook will be registered for the type
+func (r *KafkaTopic) Default() {
+	kafkatopiclog.Info("default", "name", r.Name)
+
+	// the default termination policy is 'NotDeletable'
+	if r.Spec.TerminationPolicy == "" {
+		r.Spec.TerminationPolicy = NOT_DELETABLE
+	}
+}
+
+// +kubebuilder:webhook:verbs=create;update;delete,path=/validate-kafka-btrace-com-v1alpha1-kafkatopic,mutating=false,failurePolicy=fail,groups=kafka.btrace.com,resources=kafkatopics,versions=v1alpha1,name=vkafkatopic.kb.io
+
+var _ webhook.Validator = &KafkaTopic{}
+
+// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
+func (r *KafkaTopic) ValidateCreate() error {
+	kafkatopiclog.Info("validate create", "name", r.Name)
+	if err := r.validateKafkaTopic(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
+func (r *KafkaTopic) ValidateUpdate(old runtime.Object) error {
+	kafkatopiclog.Info("validate update", "name", r.Name)
+	if err := r.validateKafkaTopic(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// ValidateDelete implements webhook.Validator so a webhook will be registered for the type
+func (r *KafkaTopic) ValidateDelete() error {
+	kafkatopiclog.Info("validate delete", "name", r.Name)
+	if r.isNotDeletable() {
+		return errors.New("topic has spec.terminationPolicy set to NotDeletable")
+	}
+	return nil
+}
+
+func (r *KafkaTopic) validateKafkaTopic() error {
+	var allErrs field.ErrorList
+	if err := r.validateKafkaTopicName(); err != nil {
+		allErrs = append(allErrs, err)
+	}
+	if err := r.validateKafkaTopicSpec(); err != nil {
+		allErrs = append(allErrs, err)
+	}
+	if len(allErrs) == 0 {
+		return nil
+	}
+	return apierrors.NewInvalid(
+		schema.GroupKind{Group: "kafka.btrace.com", Kind: "kafkatopic"},
+		r.Name, allErrs)
+}
+
+func (r *KafkaTopic) validateKafkaTopicName() *field.Error {
+	if len(r.ObjectMeta.Name) > validationutils.DNS1035LabelMaxLength {
+		return field.Invalid(field.NewPath("metadata").Child("name"), r.Name, "must be no more than 63 characters")
+	}
+	return nil
+}
+
+func (r *KafkaTopic) validateKafkaTopicSpec() *field.Error {
+	spec := field.NewPath("spec")
+	if !r.replicationFactorOkay() {
+		return field.Invalid(spec.Child("replicationFactor"), "replication-factor", "must be greater than 3")
+	}
+	if !r.partitionsOkay() {
+		return field.Invalid(spec.Child("partitions"), "partitions", "must be greater than 0")
+	}
+	if !r.clusterRefOkay() {
+		return field.Invalid(spec.Child("clusterRef"), "clusterRef", "name/namespace for kafkaconnection object must be defined")
+	}
+	if !r.terminationPolicyOkay() {
+		return field.Invalid(spec.Child("terminationPolicy"), "termnationPolicy", "possible values 'KeepTopic', 'DeleteAll', 'NotDeletable'")
+	}
+	return nil
+}
+
+func (r *KafkaTopic) replicationFactorOkay() bool {
+	if r.Spec.ReplicationFactor >= 3 {
+		return true
+	}
+	return false
+
+}
+
+func (r *KafkaTopic) partitionsOkay() bool {
+	if r.Spec.Partitions > 0 {
+		return true
+	}
+	return false
+}
+
+func (r *KafkaTopic) clusterRefOkay() bool {
+	if len(r.Spec.ClusterRef.Name) > 0 && len(r.Spec.ClusterRef.Namespace) > 0 {
+		return true
+	}
+	return false
+}
+
+func (r *KafkaTopic) terminationPolicyOkay() bool {
+	if r.Spec.TerminationPolicy == KEEP_TOPIC || r.Spec.TerminationPolicy == NOT_DELETABLE || r.Spec.TerminationPolicy == DELETE_ALL {
+		return true
+	}
+	return false
+}
+
+func (r *KafkaTopic) isNotDeletable() bool {
+	if r.Spec.TerminationPolicy == NOT_DELETABLE {
+		return true
+	}
+	return false
+}

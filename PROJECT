@@ -1,0 +1,10 @@
+version: "2"
+domain: btrace.com
+repo: github.com/btrace-baader/kafka-topic-operator
+resources:
+- group: kafka
+  version: v1alpha1
+  kind: KafkaTopic
+- group: kafka
+  version: v1alpha1
+  kind: KafkaConnection
