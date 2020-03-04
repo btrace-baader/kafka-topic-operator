@@ -1,0 +1,71 @@
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: mutating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-kafka-btrace-com-v1alpha1-kafkatopic
+  failurePolicy: Fail
+  name: mkafkatopic.kb.io
+  rules:
+  - apiGroups:
+    - kafka.btrace.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kafkatopics
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: validating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-kafka-btrace-com-v1alpha1-kafkaconnection
+  failurePolicy: Fail
+  name: vkafkaconnection.kb.io
+  rules:
+  - apiGroups:
+    - kafka.btrace.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kafkaconnections
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-kafka-btrace-com-v1alpha1-kafkatopic
+  failurePolicy: Fail
+  name: vkafkatopic.kb.io
+  rules:
+  - apiGroups:
+    - kafka.btrace.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+    resources:
+    - kafkatopics
