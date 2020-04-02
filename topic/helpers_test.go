@@ -25,6 +25,23 @@ func TestConnectionConfig(t *testing.T) {
 			So(config.Net.SASL.Password, ShouldEqual, "pass-1")
 			So(config.Net.TLS.Enable, ShouldEqual, true)
 		})
+		Convey("Positive test sasl_ssl", func() {
+			kc := v1alpha1.KafkaConnection{
+				Spec: v1alpha1.KafkaConnectionSpec{
+					Broker:     "10.23.43.45:9092",
+					Username:   "user-1",
+					Password:   "pass-1",
+					AuthMethod: "SASL_SSL",
+					Config:     nil,
+				},
+			}
+			client := KafkaClient{}
+			config := client.connectionConfig(&kc)
+			So(config.Net.SASL.Enable, ShouldEqual, true)
+			So(config.Net.SASL.User, ShouldEqual, "user-1")
+			So(config.Net.SASL.Password, ShouldEqual, "pass-1")
+			So(config.Net.TLS.Enable, ShouldEqual, true)
+		})
 		Convey("Negative test", func() {
 			Convey("non-SASL auth-method", func() {
 				kc := v1alpha1.KafkaConnection{
