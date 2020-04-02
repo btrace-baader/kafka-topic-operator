@@ -12,7 +12,7 @@ import (
 func (client *KafkaClient) connectionConfig(kc *v1alpha1.KafkaConnection) *sarama.Config {
 	config := sarama.NewConfig()
 	config.Version = sarama.V2_0_1_0
-	if kc.Spec.AuthMethod == "SASL" {
+	if kc.Spec.AuthMethod == "SASL" || kc.Spec.AuthMethod == "SASL_SSL" {
 		config.Net.SASL.Enable = true
 		config.Net.SASL.User = kc.Spec.Username
 		config.Net.SASL.Password = kc.Spec.Password
