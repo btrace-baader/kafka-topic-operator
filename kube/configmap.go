@@ -16,6 +16,12 @@ func NewConfigmap(kt v1alpha1.KafkaTopic) (*v1.ConfigMap, error) {
 	if err != nil {
 		return &v1.ConfigMap{}, err
 	}
+	if kt.ObjectMeta.Labels != nil {
+		labels, err = mergeMaps(labels, kt.Labels)
+		if err != nil {
+			return &v1.ConfigMap{}, err
+		}
+	}
 	return &v1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      kt.Name,
