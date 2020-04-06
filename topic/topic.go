@@ -86,7 +86,7 @@ func (client *KafkaClient) Update(kt *v1alpha1.KafkaTopic) error {
 			return err
 		}
 	} else {
-		client.Log.Info("invalid request. only valid operation is to INCREASE the number of partitions. not updating")
+		client.Log.Info("requested partitions are the same as current. not updating")
 		return nil
 	}
 	return err
