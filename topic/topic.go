@@ -86,7 +86,7 @@ func (client *KafkaClient) Update(kt *v1alpha1.KafkaTopic) error {
 			return err
 		}
 	} else {
-		client.Log.Info("requested partitions are the same as current (%v). not updating", kt.Spec.Partitions)
+		client.Log.Info("requested partitions are the same as current. not updating")
 		return nil
 	}
 	return err
