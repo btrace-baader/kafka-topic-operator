@@ -12,6 +12,10 @@ func NewConfigmap(kt v1alpha1.KafkaTopic) (*v1.ConfigMap, error) {
 	labels := map[string]string{
 		"managed-by": "kafkaTopic-operator",
 	}
+	labels, err := mergeMaps(labels, kt.ObjectMeta.Labels)
+	if err != nil {
+		return &v1.ConfigMap{}, err
+	}
 	data, err := data(kt)
 	if err != nil {
 		return &v1.ConfigMap{}, err
