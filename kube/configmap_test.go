@@ -110,5 +110,37 @@ func TestNewConfigmap(t *testing.T) {
 			So(configmap.Data["key1"], ShouldEqual, "value1")
 			So(configmap.Data["topic-name"], ShouldEqual, "test-topic")
 		})
+		Convey("non-nil config, extra labels", func() {
+			m := make(map[string]string)
+			m["test-key"] = "test-value"
+			kt := v1alpha1.KafkaTopic{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      "test-topic",
+					Namespace: "test",
+					Labels:    m,
+				},
+				Spec: v1alpha1.KafkaTopicSpec{
+					Partitions:        2,
+					ReplicationFactor: 3,
+					Config: map[string]string{
+						"key1": "value1",
+					},
+					ClusterRef: v1alpha1.ClusterConnection{
+						Name:      "test-connection",
+						Namespace: "test-namespace",
+					},
+				},
+			}
+			configmap, e := NewConfigmap(kt)
+			So(e, ShouldEqual, nil)
+			So(configmap.Name, ShouldEqual, "test-topic")
+			So(configmap.Namespace, ShouldEqual, "test")
+			So(configmap.Data["partitions"], ShouldEqual, "2")
+			So(configmap.Data["replicationFactor"], ShouldEqual, "3")
+			So(configmap.Data["clusterRef"], ShouldEqual, "test-namespace/test-connection")
+			So(configmap.Data["key1"], ShouldEqual, "value1")
+			So(configmap.Data["topic-name"], ShouldEqual, "test-topic")
+			So(configmap.Labels["test-key"], ShouldEqual, "test-value")
+		})
 	})
 }
