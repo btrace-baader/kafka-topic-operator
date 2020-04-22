@@ -37,7 +37,7 @@ func data(kt v1alpha1.KafkaTopic) (map[string]string, error) {
 	data := make(map[string]string)
 	data["partitions"] = strconv.Itoa(int(kt.Spec.Partitions))
 	data["replicationFactor"] = strconv.Itoa(int(kt.Spec.ReplicationFactor))
-	data["clusterRef"] = kt.Spec.ClusterRef.Namespace + "/" + kt.Spec.ClusterRef.Name
+	data["target-cluster"] = kt.Spec.TargetCluster.Name
 	data["topic-name"] = kt.Name
 	if len(kt.Spec.Config) == 0 {
 		return data, nil

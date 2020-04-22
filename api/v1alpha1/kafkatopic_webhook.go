@@ -97,8 +97,8 @@ func (r *KafkaTopic) validateKafkaTopicSpec() *field.Error {
 	if !r.partitionsOkay() {
 		return field.Invalid(spec.Child("partitions"), "partitions", "must be greater than 0")
 	}
-	if !r.clusterRefOkay() {
-		return field.Invalid(spec.Child("clusterRef"), "clusterRef", "name/namespace for kafkaconnection object must be defined")
+	if !r.targetClusterOkay() {
+		return field.Invalid(spec.Child("target-cluster"), "target-cluster", "target-cluster/kafkaconnection must be defined")
 	}
 	if !r.terminationPolicyOkay() {
 		return field.Invalid(spec.Child("terminationPolicy"), "termnationPolicy", "possible values 'KeepTopic', 'DeleteAll', 'NotDeletable'")
@@ -121,8 +121,8 @@ func (r *KafkaTopic) partitionsOkay() bool {
 	return false
 }
 
-func (r *KafkaTopic) clusterRefOkay() bool {
-	if len(r.Spec.ClusterRef.Name) > 0 && len(r.Spec.ClusterRef.Namespace) > 0 {
+func (r *KafkaTopic) targetClusterOkay() bool {
+	if len(r.Spec.TargetCluster.Name) > 0 {
 		return true
 	}
 	return false

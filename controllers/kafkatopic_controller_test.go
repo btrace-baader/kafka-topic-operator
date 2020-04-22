@@ -24,9 +24,8 @@ var _ = Describe("KafkaTopic Controller", func() {
 				Partitions:        1,
 				ReplicationFactor: 3,
 				Config:            nil,
-				ClusterRef: kafkav1alpha1.ClusterConnection{
-					Name:      testKafkaTopic.Name,
-					Namespace: testKafkaTopic.Namespace,
+				TargetCluster: kafkav1alpha1.ClusterConnection{
+					Name: testKafkaTopic.Name,
 				},
 			}
 

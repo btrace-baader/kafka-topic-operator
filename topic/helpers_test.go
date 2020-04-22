@@ -11,11 +11,11 @@ func TestConnectionConfig(t *testing.T) {
 		Convey("Positive test", func() {
 			kc := v1alpha1.KafkaConnection{
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:     "10.23.43.45:9092",
-					Username:   "user-1",
-					Password:   "pass-1",
-					AuthMethod: "SASL",
-					Config:     nil,
+					Broker:           "10.23.43.45:9092",
+					Username:         "user-1",
+					Password:         "pass-1",
+					SecurityProtocol: "SASL",
+					Config:           nil,
 				},
 			}
 			client := KafkaClient{}
@@ -28,11 +28,11 @@ func TestConnectionConfig(t *testing.T) {
 		Convey("Positive test sasl_ssl", func() {
 			kc := v1alpha1.KafkaConnection{
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:     "10.23.43.45:9092",
-					Username:   "user-1",
-					Password:   "pass-1",
-					AuthMethod: "SASL_SSL",
-					Config:     nil,
+					Broker:           "10.23.43.45:9092",
+					Username:         "user-1",
+					Password:         "pass-1",
+					SecurityProtocol: "SASL_SSL",
+					Config:           nil,
 				},
 			}
 			client := KafkaClient{}
@@ -43,28 +43,28 @@ func TestConnectionConfig(t *testing.T) {
 			So(config.Net.TLS.Enable, ShouldEqual, true)
 		})
 		Convey("Negative test", func() {
-			Convey("non-SASL auth-method", func() {
+			Convey("non-SASL security-protocol", func() {
 				kc := v1alpha1.KafkaConnection{
 					Spec: v1alpha1.KafkaConnectionSpec{
-						Broker:     "10.23.43.45:9092",
-						Username:   "user-1",
-						Password:   "pass-1",
-						AuthMethod: "NOT-SASL",
-						Config:     nil,
+						Broker:           "10.23.43.45:9092",
+						Username:         "user-1",
+						Password:         "pass-1",
+						SecurityProtocol: "NOT-SASL",
+						Config:           nil,
 					},
 				}
 				client := KafkaClient{}
 				config := client.connectionConfig(&kc)
 				So(config.Net.SASL.Enable, ShouldEqual, false)
 			})
-			Convey("empty auth-method", func() {
+			Convey("empty security-protocol", func() {
 				kc := v1alpha1.KafkaConnection{
 					Spec: v1alpha1.KafkaConnectionSpec{
-						Broker:     "10.23.43.45:9092",
-						Username:   "user-1",
-						Password:   "pass-1",
-						AuthMethod: "",
-						Config:     nil,
+						Broker:           "10.23.43.45:9092",
+						Username:         "user-1",
+						Password:         "pass-1",
+						SecurityProtocol: "",
+						Config:           nil,
 					},
 				}
 				client := KafkaClient{}
@@ -83,9 +83,8 @@ func TestTopicDetail(t *testing.T) {
 					Partitions:        2,
 					ReplicationFactor: 3,
 					Config:            nil,
-					ClusterRef: v1alpha1.ClusterConnection{
-						Name:      "test-connection",
-						Namespace: "test-namespace",
+					TargetCluster: v1alpha1.ClusterConnection{
+						Name: "test-connection",
 					},
 				},
 			}
@@ -100,9 +99,8 @@ func TestTopicDetail(t *testing.T) {
 				Config: map[string]string{
 					"key1": "value1",
 				},
-				ClusterRef: v1alpha1.ClusterConnection{
-					Name:      "test-connection",
-					Namespace: "test-namespace",
+				TargetCluster: v1alpha1.ClusterConnection{
+					Name: "test-connection",
 				},
 			},
 		}
