@@ -21,11 +21,11 @@ var _ = Describe("KafkaConnection Controller", func() {
 				Name:      "test-connection",
 			}
 			spec := kafkav1alpha1.KafkaConnectionSpec{
-				Broker:     "10.2.10.10:9092",
-				Username:   "",
-				Password:   "",
-				AuthMethod: "",
-				Config:     nil,
+				Broker:           "10.2.10.10:9092",
+				Username:         "",
+				Password:         "",
+				SecurityProtocol: "",
+				Config:           nil,
 			}
 
 			kafkaconnection := &kafkav1alpha1.KafkaConnection{

@@ -36,16 +36,6 @@ spec:
         spec:
           description: KafkaTopicSpec defines the desired state of KafkaTopic
           properties:
-            clusterRef:
-              properties:
-                name:
-                  type: string
-                namespace:
-                  type: string
-              required:
-              - name
-              - namespace
-              type: object
             config:
               additionalProperties:
                 type: string
@@ -53,14 +43,21 @@ spec:
             partitions:
               format: int32
               type: integer
-            replicationFactor:
+            replication-factor:
               type: integer
-            terminationPolicy:
+            target-cluster:
+              properties:
+                name:
+                  type: string
+              required:
+              - name
+              type: object
+            termination-policy:
               type: string
           required:
-          - clusterRef
           - partitions
-          - replicationFactor
+          - replication-factor
+          - target-cluster
           type: object
         status:
           description: KafkaTopicStatus defines the observed state of KafkaTopic

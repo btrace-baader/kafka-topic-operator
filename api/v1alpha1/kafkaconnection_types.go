@@ -6,11 +6,11 @@ import (
 
 // KafkaConnectionSpec defines the desired state of KafkaConnection
 type KafkaConnectionSpec struct {
-	Broker     string            `json:"broker"`
-	Username   string            `json:"username,omitempty"`
-	Password   string            `json:"password,omitempty"`
-	AuthMethod string            `json:"auth-method,omitempty"`
-	Config     map[string]string `json:"config,omitempty"`
+	Broker           string            `json:"broker"`
+	Username         string            `json:"username,omitempty"`
+	Password         string            `json:"password,omitempty"`
+	SecurityProtocol string            `json:"security-protocol,omitempty"`
+	Config           map[string]string `json:"config,omitempty"`
 }
 
 // KafkaConnectionStatus defines the observed state of KafkaConnection
@@ -20,6 +20,7 @@ type KafkaConnectionStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:resource:path=kafkaconnections,scope=Cluster
 
 // KafkaConnection is the Schema for the kafkaconnections API
 type KafkaConnection struct {
