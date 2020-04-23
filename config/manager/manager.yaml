@@ -27,7 +27,7 @@ spec:
         - /manager
         args:
         - --enable-leader-election
-        image: baader/kafka-topic-operator:latest
+        image: btrace/kafka-topic-operator
         name: manager
         resources:
           limits:

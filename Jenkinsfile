@@ -1,8 +1,8 @@
-def Name = 'kafka-topic-operator'
+def Name = 'btrace/kafka-topic-operator'
 pipeline {
     agent {
         kubernetes {
-            label "${Name}"
+            label "kafka-topic-operator"
             defaultContainer "jnlp"
             yaml """
 apiVersion: v1
@@ -21,8 +21,6 @@ spec:
       operator: "Equal"
       value: "bigworker"
       effect: "NoSchedule"
-  imagePullSecrets:
-    - name: awsecr-cred
   containers:
     - name: golang
       image: baader/golang-kubebuilder:1.12.5_2.3.0-alpine
@@ -59,9 +57,6 @@ spec:
         - name: docker-kaniko-config
           mountPath: /kaniko/.docker/
   volumes:
-    - name: aws-secret
-      secret:
-        secretName: aws-secret
     - name: docker-kaniko-config
       configMap:
         name: docker-kaniko-config
@@ -93,7 +88,7 @@ spec:
         stage('Build and push Docker Image') {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
-                    buildWithKaniko imageRepo: "${Name}"
+                    buildPublicRepoWithKaniko imageRepo: "${Name}"
                 }
             }
         }
@@ -107,7 +102,7 @@ spec:
              }
             steps {
                 container('udpate-manager') {
-                     notifyUpdate imageRepo: "${Name}"
+                     notifyUpdatePublicRepo imageRepo: "${Name}"
                 }
             }
         }
