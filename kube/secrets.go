@@ -30,7 +30,7 @@ func NewSecret(kc v1alpha1.KafkaConnection, namespace string) (*v1.Secret, error
 func stringData(kc v1alpha1.KafkaConnection) (map[string]string, error) {
 	stringData := make(map[string]string)
 	stringData["broker"] = kc.Spec.Broker
-	stringData["auth-method"] = kc.Spec.AuthMethod
+	stringData["security-protocol"] = kc.Spec.SecurityProtocol
 	stringData["username"] = kc.Spec.Username
 	stringData["password"] = kc.Spec.Password
 	stringData = removeEmpty(stringData)

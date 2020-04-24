@@ -27,7 +27,7 @@ spec:
         - /manager
         args:
         - --enable-leader-election
-        image: 293952241649.dkr.ecr.eu-central-1.amazonaws.com/kafka-topic-operator:latest
+        image: btrace/kafka-topic-operator
         name: manager
         resources:
           limits:

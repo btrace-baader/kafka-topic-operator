@@ -5,10 +5,9 @@ metadata:
   namespace: test
 spec:
   partitions: 1
-  replicationFactor: 3
-  clusterRef:
+  replication-factor: 3
+  target-cluster:
     name: test-connection-1
-    namespace: test
   config:
     "cleanup.policy": "compact"
     "min.compaction.lag.ms": "86400000"

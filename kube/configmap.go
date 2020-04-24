@@ -16,6 +16,12 @@ func NewConfigmap(kt v1alpha1.KafkaTopic) (*v1.ConfigMap, error) {
 	if err != nil {
 		return &v1.ConfigMap{}, err
 	}
+	if kt.ObjectMeta.Labels != nil {
+		labels, err = mergeMaps(labels, kt.Labels)
+		if err != nil {
+			return &v1.ConfigMap{}, err
+		}
+	}
 	return &v1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      kt.Name,
@@ -31,7 +37,7 @@ func data(kt v1alpha1.KafkaTopic) (map[string]string, error) {
 	data := make(map[string]string)
 	data["partitions"] = strconv.Itoa(int(kt.Spec.Partitions))
 	data["replicationFactor"] = strconv.Itoa(int(kt.Spec.ReplicationFactor))
-	data["clusterRef"] = kt.Spec.ClusterRef.Namespace + "/" + kt.Spec.ClusterRef.Name
+	data["target-cluster"] = kt.Spec.TargetCluster.Name
 	data["topic-name"] = kt.Name
 	if len(kt.Spec.Config) == 0 {
 		return data, nil

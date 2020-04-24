@@ -20,9 +20,8 @@ func TestData(t *testing.T) {
 					Config: map[string]string{
 						"key1": "value1",
 					},
-					ClusterRef: v1alpha1.ClusterConnection{
-						Name:      "test-topic",
-						Namespace: "test-namespace",
+					TargetCluster: v1alpha1.ClusterConnection{
+						Name: "test-cluster",
 					},
 				},
 			}
@@ -31,7 +30,7 @@ func TestData(t *testing.T) {
 			So(data["partitions"], ShouldEqual, "1")
 			So(data["replicationFactor"], ShouldEqual, "1")
 			So(data["key1"], ShouldEqual, "value1")
-			So(data["clusterRef"], ShouldEqual, "test-namespace/test-topic")
+			So(data["target-cluster"], ShouldEqual, "test-cluster")
 			So(data["topic-name"], ShouldEqual, "test-topic-1")
 
 		})
@@ -41,9 +40,8 @@ func TestData(t *testing.T) {
 					Partitions:        2,
 					ReplicationFactor: 3,
 					Config:            nil,
-					ClusterRef: v1alpha1.ClusterConnection{
-						Name:      "test-topic",
-						Namespace: "test-namespace",
+					TargetCluster: v1alpha1.ClusterConnection{
+						Name: "test-cluster",
 					},
 				},
 			}
@@ -51,7 +49,7 @@ func TestData(t *testing.T) {
 			So(e, ShouldEqual, nil)
 			So(data["partitions"], ShouldEqual, "2")
 			So(data["replicationFactor"], ShouldEqual, "3")
-			So(data["clusterRef"], ShouldEqual, "test-namespace/test-topic")
+			So(data["target-cluster"], ShouldEqual, "test-cluster")
 		})
 	})
 }
@@ -68,9 +66,8 @@ func TestNewConfigmap(t *testing.T) {
 					Partitions:        2,
 					ReplicationFactor: 3,
 					Config:            nil,
-					ClusterRef: v1alpha1.ClusterConnection{
-						Name:      "test-connection",
-						Namespace: "test-namespace",
+					TargetCluster: v1alpha1.ClusterConnection{
+						Name: "test-connection",
 					},
 				},
 			}
@@ -80,7 +77,7 @@ func TestNewConfigmap(t *testing.T) {
 			So(configmap.Namespace, ShouldEqual, "test")
 			So(configmap.Data["partitions"], ShouldEqual, "2")
 			So(configmap.Data["replicationFactor"], ShouldEqual, "3")
-			So(configmap.Data["clusterRef"], ShouldEqual, "test-namespace/test-connection")
+			So(configmap.Data["target-cluster"], ShouldEqual, "test-connection")
 		})
 		Convey("non-nil config", func() {
 			kt := v1alpha1.KafkaTopic{
@@ -94,9 +91,8 @@ func TestNewConfigmap(t *testing.T) {
 					Config: map[string]string{
 						"key1": "value1",
 					},
-					ClusterRef: v1alpha1.ClusterConnection{
-						Name:      "test-connection",
-						Namespace: "test-namespace",
+					TargetCluster: v1alpha1.ClusterConnection{
+						Name: "test-connection",
 					},
 				},
 			}
@@ -106,9 +102,40 @@ func TestNewConfigmap(t *testing.T) {
 			So(configmap.Namespace, ShouldEqual, "test")
 			So(configmap.Data["partitions"], ShouldEqual, "2")
 			So(configmap.Data["replicationFactor"], ShouldEqual, "3")
-			So(configmap.Data["clusterRef"], ShouldEqual, "test-namespace/test-connection")
+			So(configmap.Data["target-cluster"], ShouldEqual, "test-connection")
 			So(configmap.Data["key1"], ShouldEqual, "value1")
 			So(configmap.Data["topic-name"], ShouldEqual, "test-topic")
+		})
+		Convey("non-nil config, extra labels", func() {
+			m := make(map[string]string)
+			m["test-key"] = "test-value"
+			kt := v1alpha1.KafkaTopic{
+				ObjectMeta: v1.ObjectMeta{
+					Name:      "test-topic",
+					Namespace: "test",
+					Labels:    m,
+				},
+				Spec: v1alpha1.KafkaTopicSpec{
+					Partitions:        2,
+					ReplicationFactor: 3,
+					Config: map[string]string{
+						"key1": "value1",
+					},
+					TargetCluster: v1alpha1.ClusterConnection{
+						Name: "test-connection",
+					},
+				},
+			}
+			configmap, e := NewConfigmap(kt)
+			So(e, ShouldEqual, nil)
+			So(configmap.Name, ShouldEqual, "test-topic")
+			So(configmap.Namespace, ShouldEqual, "test")
+			So(configmap.Data["partitions"], ShouldEqual, "2")
+			So(configmap.Data["replicationFactor"], ShouldEqual, "3")
+			So(configmap.Data["target-cluster"], ShouldEqual, "test-connection")
+			So(configmap.Data["key1"], ShouldEqual, "value1")
+			So(configmap.Data["topic-name"], ShouldEqual, "test-topic")
+			So(configmap.Labels["test-key"], ShouldEqual, "test-value")
 		})
 	})
 }

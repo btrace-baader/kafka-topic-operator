@@ -47,9 +47,6 @@ func (r *KafkaConnection) ValidateUpdate(old runtime.Object) error {
 func (r *KafkaConnection) ValidateDelete() error {
 	kafkaconnectionlog.Info("validate delete", "name", r.Name)
 
-	if err := r.validateKafkaConnection(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -82,7 +79,7 @@ func (r *KafkaConnection) validateKafkaConnectionSpec() *field.Error {
 	if !r.brokerDefined() {
 		return field.Invalid(spec.Child("broker"), r.Name, "must be defined")
 	}
-	if r.Spec.AuthMethod == "SASL" || r.Spec.AuthMethod == "SASL_SSL" {
+	if r.Spec.SecurityProtocol == "SASL" || r.Spec.SecurityProtocol == "SASL_SSL" {
 		if !r.usernameDefined() {
 			return field.Invalid(spec.Child("username"), "username", "must be defined for SASL_SSL authentication")
 		}

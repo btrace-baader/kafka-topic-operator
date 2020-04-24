@@ -14,7 +14,7 @@ spec:
     listKind: KafkaConnectionList
     plural: kafkaconnections
     singular: kafkaconnection
-  scope: ""
+  scope: Cluster
   subresources:
     status: {}
   validation:
@@ -36,8 +36,6 @@ spec:
         spec:
           description: KafkaConnectionSpec defines the desired state of KafkaConnection
           properties:
-            auth-method:
-              type: string
             broker:
               type: string
             config:
@@ -45,6 +43,8 @@ spec:
                 type: string
               type: object
             password:
+              type: string
+            security-protocol:
               type: string
             username:
               type: string

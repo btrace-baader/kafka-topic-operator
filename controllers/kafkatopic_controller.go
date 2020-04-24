@@ -39,7 +39,7 @@ func (r *KafkaTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) 
 	}
 
 	// Get credentials config from KafkaConnection
-	kafkaConnection, err := getKafkaConnection(ctx, r.Client, kafkaTopic.Spec.ClusterRef.Name, kafkaTopic.Spec.ClusterRef.Namespace)
+	kafkaConnection, err := getKafkaConnection(ctx, r.Client, kafkaTopic.Spec.TargetCluster.Name)
 	if err != nil {
 		return requeueWithError(log, "unable to get KafkaConnection object", err)
 	}
@@ -75,9 +75,7 @@ func (r *KafkaTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) 
 	}
 
 	// set finalizers only if termination policy is DeleteAll
-	// finalizers are used for deleting topic on kafkacluster
-	// without finalizers, only kafkatopic object and the corresponding configmap would
-	// be deleted
+	// finalizers are used here for deleting topic on kafka cluster
 	if kafkaTopic.Spec.TerminationPolicy == kafkav1alpha1.DELETE_ALL {
 		if err := r.checkAndRunFinalizers(log, ctx, kclient, kafkaTopic); err != nil {
 			r.updateState(log, ctx, kafkaTopic, kafkav1alpha1.TOPIC_DELETE_ERROR)

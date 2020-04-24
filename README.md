@@ -38,7 +38,7 @@ metadata:
   namespace: test
 spec:
   broker: "10.130.67.52:9092"
-  auth-method: "SASL"
+  auth-method: "SASL_SSL"
   username: "user-1"
   password: "weakP0ssw@rd"
 ```

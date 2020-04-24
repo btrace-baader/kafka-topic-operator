@@ -107,9 +107,9 @@ func (r *KafkaTopicReconciler) checkAndRunFinalizers(log logr.Logger, ctx contex
 	return nil
 }
 
-func getKafkaConnection(ctx context.Context, client client.Client, clusterName, namespace string) (*kafkav1alpha1.KafkaConnection, error) {
+func getKafkaConnection(ctx context.Context, client client.Client, clusterName string) (*kafkav1alpha1.KafkaConnection, error) {
 	cluster := &kafkav1alpha1.KafkaConnection{}
-	err := client.Get(ctx, types.NamespacedName{Name: clusterName, Namespace: namespace}, cluster)
+	err := client.Get(ctx, types.NamespacedName{Name: clusterName}, cluster)
 	if err != nil {
 		return cluster, err
 	}

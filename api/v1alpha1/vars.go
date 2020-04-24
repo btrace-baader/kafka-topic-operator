@@ -20,8 +20,7 @@ const (
 )
 
 type ClusterConnection struct {
-	Name      string `json:"name"`
-	Namespace string `json:"namespace"`
+	Name string `json:"name"`
 }
 
 // KafkaTopicTerminationPolicy, possible policies: NotDeletable, KeepTopic, DeleteAll

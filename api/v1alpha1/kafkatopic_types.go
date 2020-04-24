@@ -7,10 +7,10 @@ import (
 // KafkaTopicSpec defines the desired state of KafkaTopic
 type KafkaTopicSpec struct {
 	Partitions        int32                       `json:"partitions"`
-	ReplicationFactor int16                       `json:"replicationFactor"`
+	ReplicationFactor int16                       `json:"replication-factor"`
 	Config            map[string]string           `json:"config,omitempty"`
-	ClusterRef        ClusterConnection           `json:"clusterRef"`
-	TerminationPolicy KafkaTopicTerminationPolicy `json:"terminationPolicy,omitempty"`
+	TargetCluster     ClusterConnection           `json:"target-cluster"`
+	TerminationPolicy KafkaTopicTerminationPolicy `json:"termination-policy,omitempty"`
 }
 
 // KafkaTopicStatus defines the observed state of KafkaTopic
