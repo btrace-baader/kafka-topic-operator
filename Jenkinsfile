@@ -30,8 +30,8 @@ spec:
       tty: true
       resources:
         requests:
-          memory: "128Mi"
-          cpu: "256m"
+          memory: "1Gi"
+          cpu: "1"
     - name: udpate-manager
       image: xcnt/kubernetes-update-manager:stable
       tty: true
@@ -49,8 +49,8 @@ spec:
       tty: true
       resources:
         requests:
-          memory: "512Mi"
-          cpu: "500m"
+          memory: "1.5Gi"
+          cpu: "1"
       volumeMounts:
         - name: docker-hub-credentials
           mountPath: /kaniko/.docker/
