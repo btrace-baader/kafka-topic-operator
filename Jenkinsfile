@@ -86,7 +86,6 @@ spec:
         stage('Build and push Docker Image') {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
-                    sh 'cat /kaniko/.docker/config.json'
                     buildPublicRepoWithKaniko imageRepo: "${Name}"
                 }
             }
