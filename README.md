@@ -1,16 +1,20 @@
 # kafka-topic-operator
 
 This project contains two custom resource definitions and their respective resources: KafkaConnection and KafkaTopic. 
+## Motivation
+Please check out [this](https://medium.com/@btracebaader/kafka-topic-operator-how-to-manage-kafka-topics-in-kubernetes-d0290c8341dd) post 
+on medium where we introduce this operator.
 
+## Overview
 KafkaConnection stores the connection information for the cluster such as broker address, authentication method and additional 
 (optional) connection configurations. 
 Following are the fields supported by KafkaConnection object:
 ```cassandraql
-	Broker     string             Required
-	Username   string             Optional
-	Password   string             Optional
-	AuthMethod string             Optional
-	Config     map[string]string  Optional
+	Broker              string             Required
+	Username            string             Optional
+	Password            string             Optional
+	SecurityProtocol    string             Optional
+	Config              map[string]string  Optional
 ```
 KafkaConnection also creates corresponding secrets in all namespaces which contain the 
 information specified in KafkaConnection. Purpose of the secret is to provide uniform credentials for kafka cluster
@@ -20,10 +24,10 @@ KafkaTopic defines a topic that will be created on the target cluster (can be in
 a corresponding ConfigMap with all the configuration. KafkaTopic also manages the lifecycle of the ConfigMap.
 Definition of the KafkaTopic has the following fields:
 ```cassandraql
-	Partitions        int32              Required
-	ReplicationFactor int16              Required
-	Config            map[string]string  Optional
-	ClusterRef        ClusterConnection  Required
+	Partitions           int32              Required
+	ReplicationFactor    int16              Required
+	Config               map[string]string  Optional
+	TargetCluster        ClusterConnection  Required
 ```
 KafkaTopic creates a configmap with all the configurations which can be used by services deployed
 in the same namespace.
@@ -35,10 +39,9 @@ apiVersion: kafka.btrace.com/v1alpha1
 kind: KafkaConnection
 metadata:
   name: test-connection-1
-  namespace: test
 spec:
   broker: "10.130.67.52:9092"
-  auth-method: "SASL_SSL"
+  security-protocol: "SASL_SSL"
   username: "user-1"
   password: "weakP0ssw@rd"
 ```
@@ -52,10 +55,9 @@ metadata:
   namespace: test
 spec:
   partitions: 1
-  replicationFactor: 3
-  clusterRef:
+  replication-factor: 3
+  target-cluster:
     name: test-connection-1
-    namespace: test
   config:
     "cleanup.policy": "compact"
     "min.compaction.lag.ms": "86400000"
@@ -74,7 +76,7 @@ Secrets have the same name as the KafkaConnection object, following is a sample 
 ```cassandraql
 apiVersion: v1
 data:
-  auth-method: U0FTTA==
+  security-protocol: U0FTTA==
   broker: MTAuMTMwLjY3LjUyOjkwOTI=
   password: d2Vha1Awc3N3QHJk
   username: dXNlci0x
@@ -110,11 +112,11 @@ config given in the earlier section:
 apiVersion: v1
 data:
   cleanup.policy: compact
-  clusterRef: test/test-connection-1
+  target-cluster: test/test-connection-1
   min.compaction.lag.ms: "86400000"
   max.compaction.lag.ms: "432000000"
   partitions: "1"
-  replicationFactor: "3"
+  replication-factor: "3"
   topic-name: test-topic-1
 kind: ConfigMap
 metadata:
@@ -130,7 +132,7 @@ metadata:
     name: test-topic-1
 ```
 
-The data in this ConfigMap can be used in other services. An example of using the replicationFactor as env
+The data in this ConfigMap can be used in other services. An example of using the replication-factor as env
 var in a deployment is given below:
 
  ```cassandraql
@@ -138,7 +140,7 @@ env:
  - name: REPLICATION_FACTOR
    valueFrom:
      configMapKeyRef:
-       key: replicationFactor
+       key: replication-factor
        name: test-topic-1
  ```
 
@@ -155,3 +157,21 @@ It decides what can be deleted. There are three possible values for termination 
 By default the policy is set to NotDeletable but the object can be edited to set to a different policy based on 
 requirements.
 
+## Getting Started
+This operator works with version v0.11.0 and above. Use instructions [here](https://cert-manager.io/docs/installation/kubernetes/) to set up the cert-manager.
+Once cert manager is deployed, use the following steps to set up the operator:
+```
+git clone https://github.com/btrace-baader/kafka-topic-operator.git
+cd kafka-topic-operator
+make install
+make deploy
+```
+If you want to build your own changes and test them locally, [kind](https://github.com/kubernetes-sigs/kind) is one of the choices for a lightweight Kubernetes setup. After you clone the repo and have made your changes, perform the following steps:
+```
+make install
+make docker-build
+kind load docker-image <image name:tag>
+make deploy
+```
+After the successful setup, you should be able to create resources of the types KafkaConnection and KafkaTopic, as
+described in the overview section.
