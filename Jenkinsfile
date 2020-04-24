@@ -52,14 +52,12 @@ spec:
           memory: "512Mi"
           cpu: "500m"
       volumeMounts:
-        - name: aws-secret
-          mountPath: /root/.aws
-        - name: docker-kaniko-config
+        - name: docker-hub-credentials
           mountPath: /kaniko/.docker/
   volumes:
-    - name: docker-kaniko-config
-      configMap:
-        name: docker-kaniko-config
+    - name: docker-hub-credentials
+      secret:
+        secretName: docker-hub-credentials
 """
         }
     }
@@ -88,6 +86,7 @@ spec:
         stage('Build and push Docker Image') {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
+                    sh 'cat /kaniko/.docker/config.json'
                     buildPublicRepoWithKaniko imageRepo: "${Name}"
                 }
             }
