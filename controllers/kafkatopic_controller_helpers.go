@@ -5,6 +5,7 @@ import (
 	"github.com/btrace-baader/kafka-topic-operator/kube"
 	"github.com/btrace-baader/kafka-topic-operator/topic"
 	"github.com/go-logr/logr"
+	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -20,7 +21,7 @@ func (r *KafkaTopicReconciler) manageConfigmap(ctx context.Context, req ctrl.Req
 	// create configmap object
 	configMap, err := kube.NewConfigmap(*kafkaTopic)
 	if err != nil {
-		return err
+		return errors.Errorf("error creating configmap %v: %v", *kafkaTopic, err)
 	}
 	// add KafkaTopic as the owner of the configmap
 	if err := controllerutil.SetControllerReference(kafkaTopic, configMap, r.Scheme); err != nil {
