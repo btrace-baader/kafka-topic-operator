@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+
 	kafkav1alpha1 "github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -29,7 +30,7 @@ func (r *KafkaConnectionReconciler) Reconcile(req ctrl.Request) (ctrl.Result, er
 	// Check if a resource of KafkaConnection type exists, it can be removed between
 	// reconciliation loops so error is ignored and object reconciled.
 	if err := r.Get(ctx, req.NamespacedName, kafkaConnection); err != nil {
-		log.Error(err, "unable to fetch KafkaConnection")
+		log.Info("unable to fetch KafkaConnection", "error", err)
 		return ctrl.Result{}, ignoreNotFound(err)
 	}
 	namespaces, err := r.getNamespaces(ctx)

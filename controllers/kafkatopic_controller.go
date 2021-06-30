@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+
 	kafkav1alpha1 "github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	"github.com/btrace-baader/kafka-topic-operator/topic"
 	"github.com/go-logr/logr"
@@ -34,7 +35,7 @@ func (r *KafkaTopicReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) 
 	// Check if a KafkaTopic type resource exists, it might be that it's deleted
 	// in between reconciliation so error will be ignored.
 	if err := r.Get(ctx, req.NamespacedName, kafkaTopic); err != nil {
-		log.Error(err, "unable to fetch KafkaTopic")
+		log.Info("unable to fetch kafkaTopic", "error", err)
 		return ctrl.Result{}, ignoreNotFound(err)
 	}
 
