@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM golang:1.12.5 as builder
+FROM golang:1.16 as builder
 
 WORKDIR /app
 COPY . /app
