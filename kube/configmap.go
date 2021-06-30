@@ -1,10 +1,11 @@
 package kube
 
 import (
+	"strconv"
+
 	"github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strconv"
 )
 
 // NewConfigmap returns a pointer to ConfigMap created using KafkaTopic config

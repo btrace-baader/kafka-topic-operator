@@ -1,9 +1,10 @@
 package topic
 
 import (
+	"testing"
+
 	"github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	. "github.com/smartystreets/goconvey/convey"
-	"testing"
 )
 
 func TestConnectionConfig(t *testing.T) {
@@ -11,7 +12,7 @@ func TestConnectionConfig(t *testing.T) {
 		Convey("Positive test", func() {
 			kc := v1alpha1.KafkaConnection{
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:           "10.23.43.45:9092",
+					Brokers:          []string{"10.23.43.45:9092", "10.23.43.45:9092"},
 					Username:         "user-1",
 					Password:         "pass-1",
 					SecurityProtocol: "SASL",
@@ -28,7 +29,7 @@ func TestConnectionConfig(t *testing.T) {
 		Convey("Positive test sasl_ssl", func() {
 			kc := v1alpha1.KafkaConnection{
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:           "10.23.43.45:9092",
+					Brokers:          []string{"10.23.43.45:9092", "10.23.43.45:9092"},
 					Username:         "user-1",
 					Password:         "pass-1",
 					SecurityProtocol: "SASL_SSL",
@@ -46,7 +47,7 @@ func TestConnectionConfig(t *testing.T) {
 			Convey("non-SASL security-protocol", func() {
 				kc := v1alpha1.KafkaConnection{
 					Spec: v1alpha1.KafkaConnectionSpec{
-						Broker:           "10.23.43.45:9092",
+						Brokers:          []string{"10.23.43.45:9092", "10.23.43.45:9092"},
 						Username:         "user-1",
 						Password:         "pass-1",
 						SecurityProtocol: "NOT-SASL",
@@ -60,7 +61,7 @@ func TestConnectionConfig(t *testing.T) {
 			Convey("empty security-protocol", func() {
 				kc := v1alpha1.KafkaConnection{
 					Spec: v1alpha1.KafkaConnectionSpec{
-						Broker:           "10.23.43.45:9092",
+						Brokers:          []string{"10.23.43.45:9092", "10.23.43.45:9092"},
 						Username:         "user-1",
 						Password:         "pass-1",
 						SecurityProtocol: "",

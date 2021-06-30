@@ -36,8 +36,10 @@ spec:
         spec:
           description: KafkaConnectionSpec defines the desired state of KafkaConnection
           properties:
-            broker:
-              type: string
+            brokers:
+              items:
+                type: string
+              type: array
             config:
               additionalProperties:
                 type: string
@@ -49,7 +51,7 @@ spec:
             username:
               type: string
           required:
-          - broker
+          - brokers
           type: object
         status:
           description: KafkaConnectionStatus defines the observed state of KafkaConnection

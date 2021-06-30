@@ -6,7 +6,7 @@ import (
 
 // KafkaConnectionSpec defines the desired state of KafkaConnection
 type KafkaConnectionSpec struct {
-	Broker           string            `json:"broker"`
+	Brokers          []string          `json:"brokers"`
 	Username         string            `json:"username,omitempty"`
 	Password         string            `json:"password,omitempty"`
 	SecurityProtocol string            `json:"security-protocol,omitempty"`

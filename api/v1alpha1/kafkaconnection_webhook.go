@@ -77,7 +77,7 @@ func (r *KafkaConnection) validateKafkaConnectionName() *field.Error {
 func (r *KafkaConnection) validateKafkaConnectionSpec() *field.Error {
 	spec := field.NewPath("spec")
 	if !r.brokerDefined() {
-		return field.Invalid(spec.Child("broker"), r.Name, "must be defined")
+		return field.Invalid(spec.Child("brokers"), r.Name, "must be defined")
 	}
 	if r.Spec.SecurityProtocol == "SASL" || r.Spec.SecurityProtocol == "SASL_SSL" {
 		if !r.usernameDefined() {
@@ -91,7 +91,7 @@ func (r *KafkaConnection) validateKafkaConnectionSpec() *field.Error {
 }
 
 func (r *KafkaConnection) brokerDefined() bool {
-	if len(r.Spec.Broker) > 0 {
+	if len(r.Spec.Brokers) > 0 {
 		return true
 	}
 	return false
