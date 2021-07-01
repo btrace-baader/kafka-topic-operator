@@ -110,7 +110,10 @@ func (r *KafkaTopicReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		}
 	}
 
-	r.updateState(log, ctx, kafkaTopic, kafkav1alpha1.TOPIC_CREATED)
+	// check if KafkaTopic is not under deletion
+	if kafkaTopic.ObjectMeta.DeletionTimestamp.IsZero() {
+		r.updateState(log, ctx, kafkaTopic, kafkav1alpha1.TOPIC_CREATED)
+	}
 	// rerun the reconcile loop after 120 seconds
 	return requeueWithTimeout(120)
 }
