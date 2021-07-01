@@ -1,9 +1,0 @@
-apiVersion: kafka.btrace.com/v1alpha1
-kind: KafkaConnection
-metadata:
-name: test-connection-1
-spec:
-  broker: "localhost:9092"
-  security-protocol: "SASL_SSL"
-  username: "user-1"
-  password: "weakP0ssw@rd"
