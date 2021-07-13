@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+
 	kafkav1alpha1 "github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	"github.com/btrace-baader/kafka-topic-operator/kube"
 	"github.com/go-logr/logr"
@@ -12,12 +13,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
-
-func (r *KafkaConnectionReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&kafkav1alpha1.KafkaConnection{}).
-		Complete(r)
-}
 
 func (r *KafkaConnectionReconciler) manageSecret(log logr.Logger, ctx context.Context, req ctrl.Request, kafkaConnection *kafkav1alpha1.KafkaConnection, namespace string) error {
 	// create a new secret object

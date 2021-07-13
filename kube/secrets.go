@@ -1,6 +1,8 @@
 package kube
 
 import (
+	"strings"
+
 	"github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -29,7 +31,7 @@ func NewSecret(kc v1alpha1.KafkaConnection, namespace string) (*v1.Secret, error
 // StringData converts the KafkaConnection specs into a secret data
 func stringData(kc v1alpha1.KafkaConnection) (map[string]string, error) {
 	stringData := make(map[string]string)
-	stringData["broker"] = kc.Spec.Broker
+	stringData["brokers"] = strings.Join(kc.Spec.Brokers, ",")
 	stringData["security-protocol"] = kc.Spec.SecurityProtocol
 	stringData["username"] = kc.Spec.Username
 	stringData["password"] = kc.Spec.Password

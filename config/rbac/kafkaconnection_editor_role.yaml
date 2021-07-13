@@ -1,0 +1,24 @@
+# permissions for end users to edit kafkaconnections.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kafkaconnection-editor-role
+rules:
+- apiGroups:
+  - kafka.btrace.com
+  resources:
+  - kafkaconnections
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kafka.btrace.com
+  resources:
+  - kafkaconnections/status
+  verbs:
+  - get

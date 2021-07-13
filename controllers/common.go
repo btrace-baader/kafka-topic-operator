@@ -1,10 +1,11 @@
 package controllers
 
 import (
+	"time"
+
 	"github.com/go-logr/logr"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"time"
 )
 
 func ignoreNotFound(err error) error {

@@ -1,7 +1,7 @@
 apiVersion: kafka.btrace.com/v1alpha1
 kind: KafkaConnection
 metadata:
-  name: test-connection-1
-  namespace: test
+  name: kafkaconnection-sample
 spec:
-  broker: "10.130.69.219:19092"
+  # Add fields here
+  foo: bar

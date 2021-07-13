@@ -1,3 +1,19 @@
+/*
+Copyright 2021.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package v1alpha1
 
 import (
@@ -7,7 +23,7 @@ import (
 	validationutils "k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	ctrl "sigs.k8s.io/controller-runtime"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
@@ -21,7 +37,7 @@ func (r *KafkaConnection) SetupWebhookWithManager(mgr ctrl.Manager) error {
 }
 
 // TODO(saniazara01): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:verbs=create;update,path=/validate-kafka-btrace-com-v1alpha1-kafkaconnection,mutating=false,failurePolicy=fail,groups=kafka.btrace.com,resources=kafkaconnections,versions=v1alpha1,name=vkafkaconnection.kb.io
+//+kubebuilder:webhook:path=/validate-kafka-btrace-com-v1alpha1-kafkaconnection,mutating=false,failurePolicy=fail,sideEffects=None,groups=kafka.btrace.com,resources=kafkaconnections,verbs=create;update,versions=v1alpha1,name=vkafkaconnection.kb.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &KafkaConnection{}
 
@@ -40,6 +56,8 @@ func (r *KafkaConnection) ValidateUpdate(old runtime.Object) error {
 	if err := r.validateKafkaConnection(); err != nil {
 		return err
 	}
+
+	// TODO(user): fill in your validation logic upon object update.
 	return nil
 }
 
@@ -77,7 +95,7 @@ func (r *KafkaConnection) validateKafkaConnectionName() *field.Error {
 func (r *KafkaConnection) validateKafkaConnectionSpec() *field.Error {
 	spec := field.NewPath("spec")
 	if !r.brokerDefined() {
-		return field.Invalid(spec.Child("broker"), r.Name, "must be defined")
+		return field.Invalid(spec.Child("brokers"), r.Name, "must be defined")
 	}
 	if r.Spec.SecurityProtocol == "SASL" || r.Spec.SecurityProtocol == "SASL_SSL" {
 		if !r.usernameDefined() {
@@ -91,7 +109,7 @@ func (r *KafkaConnection) validateKafkaConnectionSpec() *field.Error {
 }
 
 func (r *KafkaConnection) brokerDefined() bool {
-	if len(r.Spec.Broker) > 0 {
+	if len(r.Spec.Brokers) > 0 {
 		return true
 	}
 	return false

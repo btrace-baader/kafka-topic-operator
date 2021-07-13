@@ -1,18 +1,30 @@
 # Build the manager binary
-FROM golang:1.12.5 as builder
+FROM golang:1.16 as builder
 
-WORKDIR /app
-COPY . /app
+WORKDIR /workspace
+# Copy the Go Modules manifests
+COPY go.mod go.mod
+COPY go.sum go.sum
 # cache deps before building and copying source so that we don't need to re-download as much
 # and so that source changes don't invalidate our downloaded layer
 RUN go mod download
 
-# Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o manager
+# Copy the go source
+COPY main.go main.go
 
-FROM alpine:3.9
+COPY api/ api/
+COPY controllers/ controllers/
+COPY kube/ kube/
+COPY topic/ topic/
+
+# Build
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+
+# Use distroless as minimal base image to package the manager binary
+# Refer to https://github.com/GoogleContainerTools/distroless for more details
+FROM gcr.io/distroless/static:nonroot
 WORKDIR /
-RUN apk add --no-cache ca-certificates && update-ca-certificates
-COPY --from=builder /app/manager .
+COPY --from=builder /workspace/manager .
+USER 65532:65532
 
 ENTRYPOINT ["/manager"]

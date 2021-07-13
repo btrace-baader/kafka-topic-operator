@@ -1,10 +1,11 @@
 package kube
 
 import (
+	"testing"
+
 	"github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	. "github.com/smartystreets/goconvey/convey"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"testing"
 )
 
 func TestStringData(t *testing.T) {
@@ -12,7 +13,7 @@ func TestStringData(t *testing.T) {
 		Convey("non nil config", func() {
 			var kc = v1alpha1.KafkaConnection{
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:           "10.130.67.52:9092",
+					Brokers:          []string{"10.130.67.52:9092", "10.130.67.52:9092"},
 					Username:         "user-1",
 					Password:         "password-1",
 					SecurityProtocol: "testMethod",
@@ -23,7 +24,7 @@ func TestStringData(t *testing.T) {
 			}
 			stringData, e := stringData(kc)
 			So(e, ShouldEqual, nil)
-			So(stringData["broker"], ShouldEqual, "10.130.67.52:9092")
+			So(stringData["brokers"], ShouldEqual, "10.130.67.52:9092,10.130.67.52:9092")
 			So(stringData["security-protocol"], ShouldEqual, "testMethod")
 			So(stringData["username"], ShouldEqual, "user-1")
 			So(stringData["password"], ShouldEqual, "password-1")
@@ -33,7 +34,7 @@ func TestStringData(t *testing.T) {
 		Convey("nil config", func() {
 			var kc = v1alpha1.KafkaConnection{
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:           "10.130.67.52:9092",
+					Brokers:          []string{"10.130.67.52:9092", "10.130.67.52:9092"},
 					Username:         "user-1",
 					Password:         "password-1",
 					SecurityProtocol: "testMethod",
@@ -42,7 +43,7 @@ func TestStringData(t *testing.T) {
 			}
 			stringData, e := stringData(kc)
 			So(e, ShouldEqual, nil)
-			So(stringData["broker"], ShouldEqual, "10.130.67.52:9092")
+			So(stringData["brokers"], ShouldEqual, "10.130.67.52:9092,10.130.67.52:9092")
 			So(stringData["security-protocol"], ShouldEqual, "testMethod")
 			So(stringData["username"], ShouldEqual, "user-1")
 			So(stringData["password"], ShouldEqual, "password-1")
@@ -60,7 +61,7 @@ func TestNewSecret(t *testing.T) {
 					Namespace: "test-ns",
 				},
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:           "10.130.67.52:9092",
+					Brokers:          []string{"10.130.67.52:9092", "10.130.67.52:9092"},
 					Username:         "user-1",
 					Password:         "password-1",
 					SecurityProtocol: "testMethod",
@@ -71,7 +72,7 @@ func TestNewSecret(t *testing.T) {
 			So(e, ShouldEqual, nil)
 			So(secret.Name, ShouldEqual, "test-secret")
 			So(secret.Namespace, ShouldEqual, "not-test-ns")
-			So(secret.StringData["broker"], ShouldEqual, "10.130.67.52:9092")
+			So(secret.StringData["brokers"], ShouldEqual, "10.130.67.52:9092,10.130.67.52:9092")
 			So(secret.StringData["security-protocol"], ShouldEqual, "testMethod")
 			So(secret.StringData["username"], ShouldEqual, "user-1")
 			So(secret.StringData["password"], ShouldEqual, "password-1")
@@ -84,7 +85,7 @@ func TestNewSecret(t *testing.T) {
 					Namespace: "test-ns",
 				},
 				Spec: v1alpha1.KafkaConnectionSpec{
-					Broker:           "10.130.67.52:9092",
+					Brokers:          []string{"10.130.67.52:9092", "10.130.67.52:9092"},
 					Username:         "user-1",
 					Password:         "password-1",
 					SecurityProtocol: "testMethod",
@@ -97,7 +98,7 @@ func TestNewSecret(t *testing.T) {
 			So(e, ShouldEqual, nil)
 			So(secret.Name, ShouldEqual, "test-secret")
 			So(secret.Namespace, ShouldEqual, "not-test-ns")
-			So(secret.StringData["broker"], ShouldEqual, "10.130.67.52:9092")
+			So(secret.StringData["brokers"], ShouldEqual, "10.130.67.52:9092,10.130.67.52:9092")
 			So(secret.StringData["security-protocol"], ShouldEqual, "testMethod")
 			So(secret.StringData["username"], ShouldEqual, "user-1")
 			So(secret.StringData["password"], ShouldEqual, "password-1")

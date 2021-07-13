@@ -1,14 +1,7 @@
 apiVersion: kafka.btrace.com/v1alpha1
 kind: KafkaTopic
 metadata:
-  name: delete-me-1
-  namespace: test
+  name: kafkatopic-sample
 spec:
-  partitions: 1
-  replication-factor: 3
-  target-cluster:
-    name: test-connection-1
-  config:
-    "cleanup.policy": "compact"
-    "min.compaction.lag.ms": "86400000"
-    "max.compaction.lag.ms": "432000000"
+  # Add fields here
+  foo: bar

@@ -52,6 +52,12 @@ rules:
 - apiGroups:
   - kafka.btrace.com
   resources:
+  - kafkaconnections/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - kafka.btrace.com
+  resources:
   - kafkaconnections/status
   verbs:
   - get
@@ -69,6 +75,12 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - kafka.btrace.com
+  resources:
+  - kafkatopics/finalizers
+  verbs:
+  - update
 - apiGroups:
   - kafka.btrace.com
   resources:
