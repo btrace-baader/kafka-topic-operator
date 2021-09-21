@@ -1,3 +1,19 @@
+/*
+Copyright 2021.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package v1alpha1
 
 import (
@@ -6,7 +22,7 @@ import (
 
 // KafkaConnectionSpec defines the desired state of KafkaConnection
 type KafkaConnectionSpec struct {
-	Broker           string            `json:"broker"`
+	Brokers          []string          `json:"brokers"`
 	Username         string            `json:"username,omitempty"`
 	Password         string            `json:"password,omitempty"`
 	SecurityProtocol string            `json:"security-protocol,omitempty"`
@@ -15,12 +31,12 @@ type KafkaConnectionSpec struct {
 
 // KafkaConnectionStatus defines the observed state of KafkaConnection
 type KafkaConnectionStatus struct {
-	State KafkaConnectionState `json:"status"`
+	State KafkaConnectionState `json:"state"`
 }
 
-// +kubebuilder:object:root=true
-// +kubebuilder:subresource:status
-// +kubebuilder:resource:path=kafkaconnections,scope=Cluster
+//+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // KafkaConnection is the Schema for the kafkaconnections API
 type KafkaConnection struct {
@@ -31,7 +47,7 @@ type KafkaConnection struct {
 	Status KafkaConnectionStatus `json:"status,omitempty"`
 }
 
-// +kubebuilder:object:root=true
+//+kubebuilder:object:root=true
 
 // KafkaConnectionList contains a list of KafkaConnection
 type KafkaConnectionList struct {

@@ -1,10 +1,31 @@
-version: "2"
 domain: btrace.com
+layout:
+- go.kubebuilder.io/v3
+projectName: kafka-topic-operator
 repo: github.com/btrace-baader/kafka-topic-operator
 resources:
-- group: kafka
-  version: v1alpha1
-  kind: KafkaTopic
-- group: kafka
-  version: v1alpha1
+- api:
+    crdVersion: v1
+  controller: true
+  domain: btrace.com
+  group: kafka
   kind: KafkaConnection
+  path: github.com/btrace-baader/kafka-topic-operator/api/v1alpha1
+  version: v1alpha1
+  webhooks:
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: btrace.com
+  group: kafka
+  kind: KafkaTopic
+  path: github.com/btrace-baader/kafka-topic-operator/api/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+version: "3"

@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"context"
+	"time"
+
 	kafkav1alpha1 "github.com/btrace-baader/kafka-topic-operator/api/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"time"
 )
 
 var _ = Describe("KafkaConnection Controller", func() {
@@ -21,7 +22,7 @@ var _ = Describe("KafkaConnection Controller", func() {
 				Name:      "test-connection",
 			}
 			spec := kafkav1alpha1.KafkaConnectionSpec{
-				Broker:           "10.2.10.10:9092",
+				Brokers:          []string{"10.2.10.10:9092", "10.2.10.10:9092"},
 				Username:         "",
 				Password:         "",
 				SecurityProtocol: "",

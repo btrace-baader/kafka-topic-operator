@@ -14,7 +14,7 @@ type KafkaClient struct {
 // Init initialises the the admin client
 func (client *KafkaClient) Init(kc *v1alpha1.KafkaConnection) error {
 	client.Log.Info("creating a new cluster admin connection")
-	admin, err := sarama.NewClusterAdmin([]string{kc.Spec.Broker}, client.connectionConfig(kc))
+	admin, err := sarama.NewClusterAdmin(kc.Spec.Brokers, client.connectionConfig(kc))
 	client.admin = admin
 	if err != nil {
 		client.Log.Error(err, "can not init connection ")
