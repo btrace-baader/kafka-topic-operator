@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -65,6 +66,10 @@ func (r *KafkaConnectionReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	for _, ns := range namespaces.Items {
+		if ns.Status.Phase == v1.NamespaceTerminating {
+			continue
+		}
+	
 		log.Info(ns.Name)
 		if err := r.manageSecret(log, ctx, req, kafkaConnection, ns.Name); err != nil {
 			r.updateState(log, ctx, kafkaConnection, kafkav1alpha1.CONNECTION_ERROR)
